@@ -6,8 +6,8 @@
 ssh -X {username}@{host}``
 ```
 访问 http://{host}:8888 使用jupyter notebook lab 开发
-username  jetbot
-password   jetbot
+username:jetbot
+password:jetbot
 ### 远程使用图形界面
 https://blog.csdn.net/weixin_42232749/article/details/81624156?utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-1.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-1.control
 之后每次调用
