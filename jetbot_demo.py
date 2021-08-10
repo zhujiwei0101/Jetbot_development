@@ -119,13 +119,19 @@ class App(tk.Tk):
         self.canvas.pack()
         self.canvas.place(x = 30, y = 30)
         self.canvas.bind("<Button-1>",func = self.handler_adaptor(fun = self.FramePosition, mycanvas = self.canvas))
+        self.Frame = []
         self.Framex = []
         self.Framey = []
-        
+        self.saved_count = np.loadtxt('count.txt')
+        self.robot = Robot()
         self.scan = Scan(self.Width//2,self.Height,30,50)
         self.scan.startPipeline()
         self.wait_frame = False
         
+        basevalue=4096*((120*11)+500)/20000
+        #print(basevalue/4096*100)
+        #Lable = 1
+        self.robot.pwm.set_pwm(1,0,int(basevalue)) 
         
         self.ButtonPlaceBasex = 30 + 1280 + 30
         self.ButtonPlaceBasey = 60
@@ -137,6 +143,68 @@ class App(tk.Tk):
         self.ComponentCount += 1
         
         
+        self.save_button = tk.Button(self, text = 'Save', font = ('Arial', 14, "bold", "italic"), width = 16, height = 1, command = self.Save_file)
+        self.save_button.pack()
+        self.save_button.place(x = self.ButtonPlaceBasex, y = self.ButtonPlaceBasey + 50*self.ComponentCount, anchor = 'nw')
+        self.ComponentCount += 1
+     #实机测试   
+        
+        self.waittime = 0.5
+        
+        self.forward_button = tk.Button(self, text = 'forward', font = ('Arial', 14, "bold", "italic"), width = 16, height = 1, command = self.Forward)
+        self.forward_button.pack()
+        self.forward_button.place(x = self.ButtonPlaceBasex, y = self.ButtonPlaceBasey + 50*self.ComponentCount, anchor = 'nw')
+        self.ComponentCount += 1
+
+        self.backward_button = tk.Button(self, text = 'backward', font = ('Arial', 14, "bold", "italic"), width = 16, height = 1, command = self.Backward)
+        self.backward_button.pack()
+        self.backward_button.place(x = self.ButtonPlaceBasex, y = self.ButtonPlaceBasey + 50*self.ComponentCount, anchor = 'nw')
+        self.ComponentCount += 1
+
+        self.left_button = tk.Button(self, text = 'left', font = ('Arial', 14, "bold", "italic"), width = 16, height = 1, command = self.Left)
+        self.left_button.pack()
+        self.left_button.place(x = self.ButtonPlaceBasex, y = self.ButtonPlaceBasey + 50*self.ComponentCount, anchor = 'nw')
+        self.ComponentCount += 1
+
+        self.right_button = tk.Button(self, text = 'right', font = ('Arial', 14, "bold", "italic"), width = 16, height = 1, command = self.Right)
+        self.right_button.pack()
+        self.right_button.place(x = self.ButtonPlaceBasex, y = self.ButtonPlaceBasey + 50*self.ComponentCount, anchor = 'nw')
+        self.ComponentCount += 1
+
+
+    def Forward(self):
+        self.robot.left_motor.value  =  0.3
+        self.robot.right_motor.value  =  0.3
+        time.sleep(self.waittime)
+        self.Stop()
+        self.Capture()
+
+    def Backward(self):
+        self.robot.left_motor.value  =  -0.3
+        self.robot.right_motor.value  =  -0.3
+        time.sleep(self.waittime)
+        self.Stop()
+        self.Capture()
+
+    def Left(self):
+        self.robot.left_motor.value  =  -0.6
+        self.robot.right_motor.value  =  0.3
+        time.sleep(self.waittime)
+        self.Stop()
+        self.Capture()
+
+    def Right(self):
+        self.robot.left_motor.value  =  0.6
+        self.robot.right_motor.value  =  -0.3
+        time.sleep(self.waittime)
+        self.Stop()
+        self.Capture()
+    
+    def Stop(self):
+        self.robot.left_motor.value  =  0.0
+        self.robot.right_motor.value  =  0.0
+        time.sleep(self.waittime)
+    
     def handler_adaptor(self,fun, **kwds):
         return lambda event, fun=fun, kwds=kwds: fun(event, **kwds)
     
@@ -148,6 +216,7 @@ class App(tk.Tk):
             mycanvas.create_oval(event.x-2,event.y-2,event.x+2,event.y+2, fill = 'red')
         else:
             mycanvas.create_rectangle(self.Framex[0], self.Framey[0], self.Framex[1], self.Framey[1], outline = 'red', width = '4')
+            self.Frame.append([self.Framex[0],self.Framey[0],self.Framex[1],self.Framey[1]])
             self.Framex = []
             self.Framey = []
             
@@ -163,12 +232,38 @@ class App(tk.Tk):
         self.img_open = Image.fromarray(self.color_image)
         self.img_png = ImageTk.PhotoImage(self.img_open)
         self.canvas.create_image(self.Width//2 + 1, 1, anchor='n',image=self.img_png)
+        
     def closeWindow(self):
         if self.scan.pipe:
             self.scan.stopPipeline()
+        with open("count.txt","w") as f:
+            f.write(str(self.saved_count))
         self.destroy()    
+    
+    def Save_file(self):
+        
+        
+        self.save_path = os.path.join(os.getcwd(),"Data_"+time.strftime("%Y_%m_%d", time.localtime()))
+        if not os.path.exists(self.save_path):
+            os.mkdir(self.save_path)
+        os.mkdir(os.path.join(self.save_path, "robot{}".format(self.saved_count)))
+        #os.mkdir(os.path.join(self.save_path, "depth"))
+        
+        saved_color_image = self.scan.color_image
+        #saved_depth_colormap = self.scan.depth_colormap
 
-
+        cv2.imwrite(os.path.join((self.save_path),"robot{}".format(self.saved_count),"robot{}.png".format(self.saved_count)), saved_color_image)
+        #cv2.imwrite(os.path.join((save_path), "depth", "{}.png".format(saved_count)), saved_depth_colormap)
+        #np.save(os.path.join((save_path), "depth", "{}".format(saved_count)), scan.depth_image)
+        with open(os.path.join((self.save_path), "robot{}".format(self.saved_count) ,"robot{}.txt".format(self.saved_count)),"w") as f:
+            f.write(str(self.Frame))  
+        self.saved_count += 1
+        self.Frame = []
+        #cv2.imshow("save", np.hstack((saved_color_image, saved_depth_mapped_image)))
+        self.canvas.update()
+        #ImageGrab.grab().crop((x+1, y+1, x1, y1)).save(os.path.join((save_path),"color","frame.png"))
+        
+        print("Successfully saved")
 # In[24]:
 
 
