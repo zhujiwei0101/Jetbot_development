@@ -243,20 +243,20 @@ class App(tk.Tk):
     def Save_file(self):
         
         
-        self.save_path = os.path.join(os.getcwd(),"Data_"+time.strftime("%Y_%m_%d", time.localtime()))
+        self.save_path = os.path.join(os.getcwd(),"TurtleBotData")
         if not os.path.exists(self.save_path):
             os.mkdir(self.save_path)
-        os.mkdir(os.path.join(self.save_path, "robot{}".format(self.saved_count)))
+        #os.mkdir(os.path.join(self.save_path, "robot{}".format(self.saved_count)))
         #os.mkdir(os.path.join(self.save_path, "depth"))
         
         saved_color_image = self.scan.color_image
         #saved_depth_colormap = self.scan.depth_colormap
 
-        cv2.imwrite(os.path.join((self.save_path),"robot{}".format(self.saved_count),"robot{}.png".format(self.saved_count)), saved_color_image)
+        cv2.imwrite(os.path.join((self.save_path),"robot{}.png".format(self.saved_count)), saved_color_image)
         #cv2.imwrite(os.path.join((save_path), "depth", "{}.png".format(saved_count)), saved_depth_colormap)
         #np.save(os.path.join((save_path), "depth", "{}".format(saved_count)), scan.depth_image)
-        with open(os.path.join((self.save_path), "robot{}".format(self.saved_count) ,"robot{}.txt".format(self.saved_count)),"w") as f:
-            f.write(str(self.Frame))  
+        with open(os.path.join((self.save_path), "robot.txt"),"a") as f:
+            f.write("robot{}".format(self.saved_count)+str(self.Frame)+"\n")  
         self.saved_count += 1
         self.Frame = []
         #cv2.imshow("save", np.hstack((saved_color_image, saved_depth_mapped_image)))
