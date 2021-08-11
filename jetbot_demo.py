@@ -133,6 +133,9 @@ class App(tk.Tk):
         #Lable = 1
         self.robot.pwm.set_pwm(1,0,int(basevalue)) 
         
+        self.robot.pwm.set_pwm(0,0,int(195)) 
+        
+        
         self.ButtonPlaceBasex = 30 + 1280 + 30
         self.ButtonPlaceBasey = 60
         self.ComponentCount = 0
@@ -173,28 +176,28 @@ class App(tk.Tk):
 
 
     def Forward(self):
-        self.robot.left_motor.value  =  0.3
-        self.robot.right_motor.value  =  0.3
+        self.robot.left_motor.value  =  0.6
+        self.robot.right_motor.value  =  0.6
         time.sleep(self.waittime)
         self.Stop()
         self.Capture()
 
     def Backward(self):
-        self.robot.left_motor.value  =  -0.3
-        self.robot.right_motor.value  =  -0.3
+        self.robot.left_motor.value  =  -0.6
+        self.robot.right_motor.value  =  -0.6
         time.sleep(self.waittime)
         self.Stop()
         self.Capture()
 
     def Left(self):
-        self.robot.left_motor.value  =  -0.6
+        self.robot.left_motor.value  =  -0.3
         self.robot.right_motor.value  =  0.3
         time.sleep(self.waittime)
         self.Stop()
         self.Capture()
 
     def Right(self):
-        self.robot.left_motor.value  =  0.6
+        self.robot.left_motor.value  =  0.3
         self.robot.right_motor.value  =  -0.3
         time.sleep(self.waittime)
         self.Stop()
@@ -203,7 +206,7 @@ class App(tk.Tk):
     def Stop(self):
         self.robot.left_motor.value  =  0.0
         self.robot.right_motor.value  =  0.0
-        time.sleep(self.waittime)
+        time.sleep(self.waittime/2)
     
     def handler_adaptor(self,fun, **kwds):
         return lambda event, fun=fun, kwds=kwds: fun(event, **kwds)
@@ -216,7 +219,10 @@ class App(tk.Tk):
             mycanvas.create_oval(event.x-2,event.y-2,event.x+2,event.y+2, fill = 'red')
         else:
             mycanvas.create_rectangle(self.Framex[0], self.Framey[0], self.Framex[1], self.Framey[1], outline = 'red', width = '4')
-            self.Frame.append([self.Framex[0],self.Framey[0],self.Framex[1],self.Framey[1]])
+            x = (self.Framex[0] + self.Framex[1])//2
+            y = (self.Framey[0] + self.Framey[1])//2
+            print(self.scan.depth_image.shape,x,y,self.Framex,self.Framey)
+            self.Frame.append([self.Framex[0],self.Framey[0],self.Framex[1],self.Framey[1],self.scan.depth_image[y][x]])
             self.Framex = []
             self.Framey = []
             
@@ -231,7 +237,15 @@ class App(tk.Tk):
         self.color_image = cv2.cvtColor(self.color_image, cv2.COLOR_RGB2BGR)
         self.img_open = Image.fromarray(self.color_image)
         self.img_png = ImageTk.PhotoImage(self.img_open)
+        #print(self.scan.depth_image)
         self.canvas.create_image(self.Width//2 + 1, 1, anchor='n',image=self.img_png)
+        self.Clear()
+    
+    def Clear(self):
+        self.Framex = []
+        self.Framey = []
+        self.Frame = []
+        
         
     def closeWindow(self):
         if self.scan.pipe:
@@ -252,11 +266,11 @@ class App(tk.Tk):
         saved_color_image = self.scan.color_image
         #saved_depth_colormap = self.scan.depth_colormap
 
-        cv2.imwrite(os.path.join((self.save_path),"robot{}.png".format(self.saved_count)), saved_color_image)
+        cv2.imwrite(os.path.join((self.save_path),"robot{}.png".format(int(self.saved_count))), saved_color_image)
         #cv2.imwrite(os.path.join((save_path), "depth", "{}.png".format(saved_count)), saved_depth_colormap)
         #np.save(os.path.join((save_path), "depth", "{}".format(saved_count)), scan.depth_image)
         with open(os.path.join((self.save_path), "robot.txt"),"a") as f:
-            f.write("robot{}".format(self.saved_count)+str(self.Frame)+"\n")  
+            f.write("robot{}".format(int(self.saved_count))+str(self.Frame)+"\n")  
         self.saved_count += 1
         self.Frame = []
         #cv2.imshow("save", np.hstack((saved_color_image, saved_depth_mapped_image)))
