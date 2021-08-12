@@ -109,6 +109,7 @@ class Scan():
 class App(tk.Tk):
     
     def __init__(self):
+        os.system("xset r off")
         tk.Tk.__init__(self)
         self.Height = 480
         self.Width = 1280
@@ -128,6 +129,8 @@ class App(tk.Tk):
         self.scan.startPipeline()
         self.wait_frame = False
         
+        self.keyboardcontrol = False
+        
         basevalue=4096*((120*11)+500)/20000
         #print(basevalue/4096*100)
         #Lable = 1
@@ -145,6 +148,17 @@ class App(tk.Tk):
         self.capture_button.place(x = self.ButtonPlaceBasex, y = self.ButtonPlaceBasey + 50*self.ComponentCount, anchor = 'nw')
         self.ComponentCount += 1
         
+        self.keyboard_button = tk.Button(self, text = 'Keyboard', font = ('Arial', 14, "bold", "italic"), width = 16, height = 1, command = self.Keyboard)
+        self.keyboard_button.pack()
+        self.keyboard_button.place(x = self.ButtonPlaceBasex, y = self.ButtonPlaceBasey + 50*self.ComponentCount, anchor = 'nw')
+        self.ComponentCount += 1
+        
+        self.keyboardstring = tk.StringVar(value = str(self.keyboardcontrol))
+        self.keyboardlabel = tk.Label(self, textvariable = self.keyboardstring, font = ('Arial', 14, "bold", "italic"), width = 16, height = 1)
+        self.keyboardlabel.pack()
+        self.keyboardlabel.place(x = self.ButtonPlaceBasex, y = self.ButtonPlaceBasey + 50*self.ComponentCount, anchor = 'nw')
+        self.ComponentCount += 1
+    
         
         self.save_button = tk.Button(self, text = 'Save', font = ('Arial', 14, "bold", "italic"), width = 16, height = 1, command = self.Save_file)
         self.save_button.pack()
@@ -175,6 +189,47 @@ class App(tk.Tk):
         self.ComponentCount += 1
 
 
+    def Keyboard(self):
+        self.keyboardcontrol = not self.keyboardcontrol
+        self.keyboardstring.set(str(self.keyboardcontrol))
+        self.keyboardlabel.update()
+        if(self.keyboardcontrol == True):
+            self.bind("<Up>" ,self.keyForward)
+            self.bind("<Down>",self.keyBackward)
+            self.bind("<Left>",self.keyLeft)
+            self.bind("<Right>",self.keyRight)
+            self.bind("<KeyRelease>",self.keyStop)
+        else:
+            self.waittime = 0.5
+            self.unbind("<Up>")
+            self.unbind("<Down>")
+            self.unbind("<Left>")
+            self.unbind("<Right>")
+            self.unbind("<KeyRelease>")
+    def keyForward(self,event):
+        self.robot.left_motor.value  =  0.6
+        self.robot.right_motor.value  =  0.6
+
+    def keyBackward(self,event):
+        self.robot.left_motor.value  =  -0.6
+        self.robot.right_motor.value  =  -0.6
+        
+    def keyLeft(self,event):
+        self.robot.left_motor.value  =  -0.6
+        self.robot.right_motor.value  =  0.6
+    
+    def keyRight(self,event):
+        self.robot.left_motor.value  =  0.6
+        self.robot.right_motor.value  =  -0.6
+    
+    def keyStop(self,event):
+        print(1)
+        self.robot.left_motor.value  =  0.0
+        self.robot.right_motor.value  =  0.0
+    
+    def keyCapture(self,event):
+        self.Capture()
+    
     def Forward(self):
         self.robot.left_motor.value  =  0.6
         self.robot.right_motor.value  =  0.6
@@ -190,15 +245,15 @@ class App(tk.Tk):
         self.Capture()
 
     def Left(self):
-        self.robot.left_motor.value  =  -0.3
-        self.robot.right_motor.value  =  0.3
+        self.robot.left_motor.value  =  -0.6
+        self.robot.right_motor.value  =  0.6
         time.sleep(self.waittime)
         self.Stop()
         self.Capture()
 
     def Right(self):
-        self.robot.left_motor.value  =  0.3
-        self.robot.right_motor.value  =  -0.3
+        self.robot.left_motor.value  =  0.6
+        self.robot.right_motor.value  =  -0.6
         time.sleep(self.waittime)
         self.Stop()
         self.Capture()
@@ -252,6 +307,7 @@ class App(tk.Tk):
             self.scan.stopPipeline()
         with open("count.txt","w") as f:
             f.write(str(self.saved_count))
+        os.system("set r on")
         self.destroy()    
     
     def Save_file(self):
