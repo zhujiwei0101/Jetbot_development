@@ -3,7 +3,7 @@
 ## 远程连接
 
 ```bash
-ssh -X {username}@{host}``
+ssh -X {username}@{host}
 ```
 访问 http://{host}:8888 使用jupyter notebook lab 开发
 username:jetbot
