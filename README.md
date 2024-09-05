@@ -102,14 +102,14 @@ export PYTHONPATH=$PYTHONPATH:/usr/local/lib:/usr/local/lib/python3.6/pyrealsens
 source ~/.bashrc
 ```
 参考
-[1]https://github.com/jetsonhacks/installRealSenseSDK
-[2]https://dev.intelrealsense.com/docs/nvidia-jetson-tx2-installation 
-[3]https://www.huaweicloud.com/articles/0ba49cd30493adbb37c82250408d8be4.html
-[4] https://blog.csdn.net/weixin_41010198/article/details/113618002
-[5]https://blog.csdn.net/weixin_41010198/article/details/113997798?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_title~default-0.control&spm=1001.2101.3001.4242
-[6]https://github.com/JetsonHacksNano/installLibrealsense
-[7]https://www.jetsonhacks.com/2019/12/22/install-realsense-camera-in-5-minutes-jetson-nano/
-[8]https://blog.csdn.net/weixin_43719386/article/details/102647424?utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-3.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-3.control
+[1]https://github.com/jetsonhacks/installRealSenseSDK \\
+[2]https://dev.intelrealsense.com/docs/nvidia-jetson-tx2-installation \\
+[3]https://www.huaweicloud.com/articles/0ba49cd30493adbb37c82250408d8be4.html \\
+[4] https://blog.csdn.net/weixin_41010198/article/details/113618002 \\
+[5]https://blog.csdn.net/weixin_41010198/article/details/113997798?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_title~default-0.control&spm=1001.2101.3001.4242 \\
+[6]https://github.com/JetsonHacksNano/installLibrealsense \\
+[7]https://www.jetsonhacks.com/2019/12/22/install-realsense-camera-in-5-minutes-jetson-nano/ \\
+[8]https://blog.csdn.net/weixin_43719386/article/details/102647424?utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-3.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-3.control \\
 ## 运动控制
 ```python3
 import time 
